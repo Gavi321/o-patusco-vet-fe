@@ -1,0 +1,16 @@
+@import 'tailwindcss';
+
+.el-date-editor.el-input__wrapper {
+  width: 500px !important;
+}
+
+:root {
+  --el-menu-hover-bg-color: transparent !important;
+  --el-menu-active-color: var(--el-menu-text-color) !important;
+  --el-menu-hover-text-color: var(--el-menu-text-color) !important;
+  --el-menu-horizontal-height: 55px;
+}
+
+ul.el-menu {
+  justify-content: space-between;
+}
