@@ -148,6 +148,6 @@ const saveAppointment = () => {
   </el-form>
 
   <div class="flex flex-row justify-center">
-    <el-button type="primary" class="!mt-5" @click="saveAppointment">Agendar</el-button>
+    <el-button type="primary" class="!mt-5" @click="saveAppointment">{{ !appointment.id ? 'Agendar' : 'Guardar' }}</el-button>
   </div>
 </template>
