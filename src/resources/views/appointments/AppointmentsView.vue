@@ -19,12 +19,18 @@ import { useAppStore } from '@/stores/app.store'
 import { useUserStore } from '@/stores/user.store'
 import api from '@/api/axios'
 import dayjs from 'dayjs'
+import { useRouter } from 'vue-router'
 
 const appStore = useAppStore()
 const userStore = useUserStore()
+const router = useRouter();
 
 const appointments = ref([])
 const users = ref([])
+
+const currentPage = ref(1);
+const totalPages = ref(0);
+const total = ref(0);
 
 const filters = ref({
   dateRange: [],
@@ -34,9 +40,11 @@ const filters = ref({
 const isCreateEditAppointment = ref(false)
 
 const fetchAppointments = async () => {
-  appointmentsService.getAll(filters.value).then((response) => {
+  appointmentsService.getAll({ ...filters.value, page: currentPage.value }).then((response) => {
     if (response.status >= 200 && response.status < 300) {
       appointments.value = response.data.data
+      total.value = response.data.meta?.total
+      totalPages.value = response.data.meta?.last_page
     }
   })
 }
@@ -186,6 +194,11 @@ const deleteAppointment = async (appointmentID) => {
 
   appStore.stopLoading()
 }
+
+const handlePageChange = (page) => {
+  currentPage.value = page;
+  fetchAppointments();
+};
 </script>
 
 <template>
@@ -223,12 +236,17 @@ const deleteAppointment = async (appointmentID) => {
         <el-button type="primary" plain @click="fetchAppointments"> Filtrar </el-button>
       </div>
 
-      <el-button v-if="userStore.hasRole('admin')" type="primary" plain @click="newAppointment">
-        Novo Agendamento
-      </el-button>
+      <div v-if="userStore.hasRole('admin')">
+        <el-button type="primary" plain @click="newAppointment">
+          Novo Agendamento
+        </el-button>
+        <el-button type="primary" plain @click="router.push('/register')">
+          Novo(a) veterinário(a)
+        </el-button>
+      </div>
     </div>
 
-    <el-table :data="appointments" v-loading="useAppStore().isLoading" style="width: 100%">
+    <el-table :data="appointments" v-loading="useAppStore().isLoading" style="width: 100%;">
       <el-table-column prop="date" label="Data">
         <template #default="scope">
           {{ dayjs(scope.row.date).format('DD/MM/YYYY') }}
@@ -304,5 +322,13 @@ const deleteAppointment = async (appointmentID) => {
         </template>
       </el-table-column>
     </el-table>
+    
+    <el-pagination
+      layout="prev, pager, next, total"
+      :current-page="currentPage"
+      :page-count="totalPages"
+      :total="total"
+      @current-change="handlePageChange"
+    />
   </div>
 </template>

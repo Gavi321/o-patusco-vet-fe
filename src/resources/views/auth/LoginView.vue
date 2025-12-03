@@ -27,8 +27,12 @@ const loginAction = async () => {
     if (valid) {
       userStore
         .login(loginObj.value)
-        .then(() => {
-          router.push('/appointments')
+        .then((response) => {
+          if(response.status >= 200 && response.status < 300) {
+            router.push('/appointments')
+          } else {
+            errorMessage.value = 'Erro, tente novamente'
+          }
         })
         .catch(() => {
           errorMessage.value = 'Erro, tente novamente'
@@ -67,12 +71,9 @@ const loginAction = async () => {
             @keyup="errorMessage = null"
           />
         </el-form-item>
-        <div class="!mb-3">
-          <span
-            v-if="errorMessage"
-            class="text-[13px] p-1 border border-red-300 bg-red-50 text-red-500 rounded-[3px]"
-            >{{ errorMessage }}</span
-          >
+        <div v-if="errorMessage"
+             class="text-[13px] !w-full !mb-3 p-1 border border-red-300 bg-red-50 text-red-500 rounded-[3px]"
+        >{{ errorMessage }}
         </div>
         <el-button type="primary" plain class="!w-full" @click="loginAction"> Login </el-button>
       </el-form>

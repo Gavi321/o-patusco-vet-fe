@@ -147,5 +147,7 @@ const saveAppointment = () => {
     </el-form-item>
   </el-form>
 
-  <el-button type="primary" class="!mt-5 float-right" @click="saveAppointment">Agendar</el-button>
+  <div class="flex flex-row justify-center">
+    <el-button type="primary" class="!mt-5" @click="saveAppointment">Agendar</el-button>
+  </div>
 </template>
